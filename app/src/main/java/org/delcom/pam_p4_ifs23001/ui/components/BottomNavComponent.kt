@@ -89,7 +89,10 @@ fun BottomNavComponent(navController: NavHostController) {
             tonalElevation = 0.dp
         ) {
             items.forEachIndexed { _, screen ->
-                val selected = currentRoute?.contains(screen.route) == true
+                // Memperbaiki logika seleksi: Harus cocok persis atau merupakan sub-route (misal plants/1)
+                // tetapi tidak boleh tertukar antara "plants" dan "plantspc"
+                val selected = currentRoute == screen.route || currentRoute?.startsWith("${screen.route}/") == true
+                
                 val animatedHeight by animateDpAsState(
                     targetValue = if (selected) 56.dp else 48.dp,
                     label = "navigationHeight"
@@ -105,7 +108,6 @@ fun BottomNavComponent(navController: NavHostController) {
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            // Icon dengan efek khusus
                             NavigationIcon(
                                 selected = selected,
                                 screen = screen,
@@ -122,7 +124,7 @@ fun BottomNavComponent(navController: NavHostController) {
                         selectedTextColor = MaterialTheme.colorScheme.primary,
                         unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                         unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                        indicatorColor = Color.Transparent // Remove default indicator
+                        indicatorColor = Color.Transparent
                     )
                 )
             }
@@ -141,7 +143,6 @@ fun NavigationIcon(
         modifier = Modifier.size(48.dp),
         contentAlignment = Alignment.Center
     ) {
-        // Background untuk icon yang aktif
         if (selected) {
             Box(
                 modifier = Modifier
@@ -158,7 +159,6 @@ fun NavigationIcon(
             )
         }
 
-        // Icon dengan badge jika ada notifikasi
         BadgedBox(
             badge = {
                 if (hasNotification && !selected) {
