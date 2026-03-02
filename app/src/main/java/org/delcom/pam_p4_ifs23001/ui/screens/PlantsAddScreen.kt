@@ -87,7 +87,7 @@ fun PlantsAddScreen(
 
     LaunchedEffect(Unit) {
         // Reset status plant action
-        uiStatePlant.plantAction = PlantActionUIState.Loading
+        plantViewModel.resetPlantAction()
     }
 
     // Simpan data
@@ -327,8 +327,6 @@ fun PlantsAddUI(
             keyboardActions = KeyboardActions(
                 onNext = { manfaatFocus.requestFocus() }
             ),
-            maxLines = 5,
-            minLines = 3
         )
 
         // Manfaat
@@ -359,8 +357,6 @@ fun PlantsAddUI(
             keyboardActions = KeyboardActions(
                 onNext = { efekFocus.requestFocus() }
             ),
-            maxLines = 5,
-            minLines = 3
         )
 
         // Efek Samping
@@ -389,127 +385,43 @@ fun PlantsAddUI(
                 imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(
-                onDone = {
-                    focusManager.clearFocus() // menutup keyboard
-                }
+                onDone = { focusManager.clearFocus() }
             ),
-            maxLines = 5,
-            minLines = 3
         )
 
-        Spacer(modifier = Modifier.height(64.dp))
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
         // Floating Action Button
         FloatingActionButton(
             onClick = {
-                if (dataFile != null) {
-
-                    if(dataNama.isEmpty()) {
-                        AlertHelper.show(
-                            alertState,
-                            AlertType.ERROR,
-                            "Nama tidak boleh kosong!"
-                        )
-                        return@FloatingActionButton
-                    }
-
-                    if(dataDeskripsi.isEmpty()) {
-                        AlertHelper.show(
-                            alertState,
-                            AlertType.ERROR,
-                            "Deskripsi tidak boleh kosong!"
-                        )
-                        return@FloatingActionButton
-                    }
-
-                    if(dataManfaat.isEmpty()) {
-                        AlertHelper.show(
-                            alertState,
-                            AlertType.ERROR,
-                            "Informasi manfaat tidak boleh kosong!"
-                        )
-                        return@FloatingActionButton
-                    }
-
-                    if(dataEfekSamping.isEmpty()) {
-                        AlertHelper.show(
-                            alertState,
-                            AlertType.ERROR,
-                            "Informasi efek samping tidak boleh kosong!"
-                        )
-                        return@FloatingActionButton
-                    }
-
-                    onSave(
-                        context,
-                        dataNama,
-                        dataDeskripsi,
-                        dataManfaat,
-                        dataEfekSamping,
-                        dataFile!!
-                    )
-                } else {
-                    AlertHelper.show(
-                        alertState,
-                        AlertType.ERROR,
-                        "Gambar tidak boleh kosong!"
+                if (dataFile == null || dataNama.isEmpty() || dataDeskripsi.isEmpty() || dataManfaat.isEmpty() || dataEfekSamping.isEmpty()) {
+                    alertState.value = AlertState(
+                        isVisible = true,
+                        type = AlertType.WARNING,
+                        message = "Semua field harus diisi!"
                     )
                     return@FloatingActionButton
                 }
 
+                onSave(
+                    context,
+                    dataNama,
+                    dataDeskripsi,
+                    dataManfaat,
+                    dataEfekSamping,
+                    dataFile!!
+                )
             },
             modifier = Modifier
-                .align(Alignment.BottomEnd) // pojok kanan bawah
-                .padding(16.dp) // jarak dari tepi
-            ,
+                .align(Alignment.End)
+                .padding(bottom = 16.dp),
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary
         ) {
-            Icon(
-                imageVector = Icons.Default.Save,
-                contentDescription = "Simpan Data"
-            )
+            Icon(Icons.Default.Save, contentDescription = "Simpan")
         }
     }
 
-    if (alertState.value.isVisible) {
-        AlertDialog(
-            onDismissRequest = {
-                AlertHelper.dismiss(alertState)
-            },
-            title = {
-                Text(alertState.value.type.title)
-            },
-            text = {
-                Text(alertState.value.message)
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        AlertHelper.dismiss(alertState)
-                    }
-                ) {
-                    Text("OK")
-                }
-            }
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Light Mode")
-@Composable
-fun PreviewPlantsAddUI() {
-//    DelcomTheme {
-//        PlantsAddUI(
-//            plants = DummyData.getPlantsAddData(),
-//            onOpen = {}
-//        )
-//    }
+    // Alert Dialog
+    AlertHelper.ShowAlert(alertState)
 }
 
 @Composable
@@ -521,12 +433,12 @@ fun PlantsAddScreenpc(
     // Ambil data dari viewmodel
     val uiStatePlant by plantViewModel.uiState.collectAsState()
 
-    var isLoading by remember { mutableStateOf<Boolean>(false) }
+    var isLoading by remember { mutableStateOf(false) }
     var tmpPlant by remember { mutableStateOf<ResponsePlantDatapc?>(null) }
 
     LaunchedEffect(Unit) {
         // Reset status plant action
-        uiStatePlant.plantAction = PlantActionUIState.Loading
+        plantViewModel.resetPlantAction()
     }
 
     // Simpan data
@@ -560,8 +472,8 @@ fun PlantsAddScreenpc(
         plantViewModel.postPlantpc(
             nama = namaBody,
             deskripsi = deskripsiBody,
-            manfaat = hargaBody,
-            efekSamping = pengaruhBody,
+            harga = hargaBody,
+            pengaruh = pengaruhBody,
             file = filePart,
         )
     }
@@ -607,7 +519,7 @@ fun PlantsAddScreenpc(
         // Top App Bar
         TopAppBarComponent(
             navController = navController,
-            title = "Tambah Data",
+            title = "Tambah Data PC",
             showBackButton = true,
         )
         // Content
@@ -642,8 +554,8 @@ fun PlantsAddUIpc(
     var dataFile by remember { mutableStateOf<Uri?>(null) }
     var dataNama by remember { mutableStateOf(tmpPlant?.nama ?: "") }
     var dataDeskripsi by remember { mutableStateOf(tmpPlant?.deskripsi ?: "") }
-    var dataharga by remember { mutableStateOf(tmpPlant?.harga ?: "") }
-    var datapengaruh by remember { mutableStateOf(tmpPlant?.pengaruh ?: "") }
+    var dataHarga by remember { mutableStateOf(tmpPlant?.harga ?: "") }
+    var dataPengaruh by remember { mutableStateOf(tmpPlant?.pengaruh ?: "") }
     val context = LocalContext.current
 
     // Focus manager
@@ -766,14 +678,12 @@ fun PlantsAddUIpc(
             keyboardActions = KeyboardActions(
                 onNext = { hargaFocus.requestFocus() }
             ),
-            maxLines = 5,
-            minLines = 3
         )
 
         // Harga
         OutlinedTextField(
-            value = dataharga,
-            onValueChange = { dataharga = it },
+            value = dataHarga,
+            onValueChange = { dataHarga = it },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -798,14 +708,12 @@ fun PlantsAddUIpc(
             keyboardActions = KeyboardActions(
                 onNext = { pengaruhFocus.requestFocus() }
             ),
-            maxLines = 5,
-            minLines = 3
         )
 
         // Pengaruh
         OutlinedTextField(
-            value = datapengaruh,
-            onValueChange = { datapengaruh = it },
+            value = dataPengaruh,
+            onValueChange = { dataPengaruh = it },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -828,125 +736,41 @@ fun PlantsAddUIpc(
                 imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(
-                onDone = {
-                    focusManager.clearFocus() // menutup keyboard
-                }
+                onDone = { focusManager.clearFocus() }
             ),
-            maxLines = 5,
-            minLines = 3
         )
 
-        Spacer(modifier = Modifier.height(64.dp))
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
         // Floating Action Button
         FloatingActionButton(
             onClick = {
-                if (dataFile != null) {
-
-                    if(dataNama.isEmpty()) {
-                        AlertHelper.show(
-                            alertState,
-                            AlertType.ERROR,
-                            "Nama tidak boleh kosong!"
-                        )
-                        return@FloatingActionButton
-                    }
-
-                    if(dataDeskripsi.isEmpty()) {
-                        AlertHelper.show(
-                            alertState,
-                            AlertType.ERROR,
-                            "Deskripsi tidak boleh kosong!"
-                        )
-                        return@FloatingActionButton
-                    }
-
-                    if(dataharga.isEmpty()) {
-                        AlertHelper.show(
-                            alertState,
-                            AlertType.ERROR,
-                            "Harga tidak boleh kosong!"
-                        )
-                        return@FloatingActionButton
-                    }
-
-                    if(datapengaruh.isEmpty()) {
-                        AlertHelper.show(
-                            alertState,
-                            AlertType.ERROR,
-                            "Informasi pengaruh tidak boleh kosong!"
-                        )
-                        return@FloatingActionButton
-                    }
-
-                    onSave(
-                        context,
-                        dataNama,
-                        dataDeskripsi,
-                        dataharga,
-                        datapengaruh,
-                        dataFile!!
-                    )
-                } else {
-                    AlertHelper.show(
-                        alertState,
-                        AlertType.ERROR,
-                        "Gambar tidak boleh kosong!"
+                if (dataFile == null || dataNama.isEmpty() || dataDeskripsi.isEmpty() || dataHarga.isEmpty() || dataPengaruh.isEmpty()) {
+                    alertState.value = AlertState(
+                        isVisible = true,
+                        type = AlertType.WARNING,
+                        message = "Semua field harus diisi!"
                     )
                     return@FloatingActionButton
                 }
 
+                onSave(
+                    context,
+                    dataNama,
+                    dataDeskripsi,
+                    dataHarga,
+                    dataPengaruh,
+                    dataFile!!
+                )
             },
             modifier = Modifier
-                .align(Alignment.BottomEnd) // pojok kanan bawah
-                .padding(16.dp) // jarak dari tepi
-            ,
+                .align(Alignment.End)
+                .padding(bottom = 16.dp),
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary
         ) {
-            Icon(
-                imageVector = Icons.Default.Save,
-                contentDescription = "Simpan Data"
-            )
+            Icon(Icons.Default.Save, contentDescription = "Simpan")
         }
     }
 
-    if (alertState.value.isVisible) {
-        AlertDialog(
-            onDismissRequest = {
-                AlertHelper.dismiss(alertState)
-            },
-            title = {
-                Text(alertState.value.type.title)
-            },
-            text = {
-                Text(alertState.value.message)
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        AlertHelper.dismiss(alertState)
-                    }
-                ) {
-                    Text("OK")
-                }
-            }
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "Light Mode")
-@Composable
-fun PreviewPlantsAddUIpc() {
-//    DelcomTheme {
-//        PlantsAddUI(
-//            plants = DummyData.getPlantsAddData(),
-//            onOpen = {}
-//        )
-//    }
+    // Alert Dialog
+    AlertHelper.ShowAlert(alertState)
 }

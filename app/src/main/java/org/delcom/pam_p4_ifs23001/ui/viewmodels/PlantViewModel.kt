@@ -44,8 +44,8 @@ sealed interface PlantActionUIState {
 data class UIStatePlant(
     val profile: ProfileUIState = ProfileUIState.Loading,
     val plants: PlantsUIState = PlantsUIState.Loading,
-    var plant: PlantUIState = PlantUIState.Loading,
-    var plantAction: PlantActionUIState = PlantActionUIState.Loading
+    val plant: PlantUIState = PlantUIState.Loading,
+    val plantAction: PlantActionUIState = PlantActionUIState.Loading
 )
 
 @HiltViewModel
@@ -100,7 +100,7 @@ class PlantViewModel @Inject constructor(
                 repository.postPlant(nama, deskripsi, manfaat, efekSamping, file)
             }.fold(
                 onSuccess = { response ->
-                    if (response.status == "success") PlantActionUIState.Success(response.data!!.plantId)
+                    if (response.status == "success") PlantActionUIState.Success(response.message)
                     else PlantActionUIState.Error(response.message)
                 },
                 onFailure = { PlantActionUIState.Error(it.message ?: "Unknown error") }
@@ -177,14 +177,14 @@ class PlantViewModel @Inject constructor(
         }
     }
 
-    fun postPlantpc(nama: RequestBody, deskripsi: RequestBody, manfaat: RequestBody, efekSamping: RequestBody, file: MultipartBody.Part) {
+    fun postPlantpc(nama: RequestBody, deskripsi: RequestBody, harga: RequestBody, pengaruh: RequestBody, file: MultipartBody.Part) {
         viewModelScope.launch {
             _uiState.update { it.copy(plantAction = PlantActionUIState.Loading) }
             val tmpState = runCatching {
-                repositorypc.postPlantpc(nama, deskripsi, manfaat, efekSamping, file) // Gunakan repositorypc
+                repositorypc.postPlantpc(nama, deskripsi, harga, pengaruh, file) // Nama parameter disesuaikan
             }.fold(
                 onSuccess = { response ->
-                    if (response.status == "success") PlantActionUIState.Success(response.data!!.plantIdpc)
+                    if (response.status == "success") PlantActionUIState.Success(response.message)
                     else PlantActionUIState.Error(response.message)
                 },
                 onFailure = { PlantActionUIState.Error(it.message ?: "Unknown error") }
@@ -209,11 +209,11 @@ class PlantViewModel @Inject constructor(
         }
     }
 
-    fun putPlantpc(plantId: String, nama: RequestBody, deskripsi: RequestBody, manfaat: RequestBody, efekSamping: RequestBody, file: MultipartBody.Part?) {
+    fun putPlantpc(plantId: String, nama: RequestBody, deskripsi: RequestBody, harga: RequestBody, pengaruh: RequestBody, file: MultipartBody.Part?) {
         viewModelScope.launch {
             _uiState.update { it.copy(plantAction = PlantActionUIState.Loading) }
             val tmpState = runCatching {
-                repositorypc.putPlantpc(plantId, nama, deskripsi, manfaat, efekSamping, file) // Gunakan repositorypc
+                repositorypc.putPlantpc(plantId, nama, deskripsi, harga, pengaruh, file) // Nama parameter disesuaikan
             }.fold(
                 onSuccess = { response ->
                     if (response.status == "success") PlantActionUIState.Success(response.message)
@@ -239,5 +239,9 @@ class PlantViewModel @Inject constructor(
             )
             _uiState.update { it.copy(plantAction = tmpState) }
         }
+    }
+
+    fun resetPlantAction() {
+        _uiState.update { it.copy(plantAction = PlantActionUIState.Loading) }
     }
 }

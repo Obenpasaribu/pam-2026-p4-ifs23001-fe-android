@@ -90,9 +90,6 @@ fun PlantsEditScreen(
     // Dapatkan Komponen berdasarkan ID
     LaunchedEffect(Unit) {
         isLoading = true
-        // Reset status plant action
-        uiStatePlant.plantAction = PlantActionUIState.Loading
-        uiStatePlant.plant = PlantUIState.Loading
         plantViewModel.getPlantById(plantId)
     }
 
@@ -533,9 +530,6 @@ fun PlantsEditScreenpc(
     // Dapatkan Komponen berdasarkan ID
     LaunchedEffect(Unit) {
         isLoading = true
-        // Reset status plant action
-        uiStatePlant.plantAction = PlantActionUIState.Loading
-        uiStatePlant.plant = PlantUIState.Loading
         plantViewModel.getPlantByIdpc(plantId)
     }
 
@@ -577,8 +571,8 @@ fun PlantsEditScreenpc(
             plantId = plantId,
             nama = namaBody,
             deskripsi = deskripsiBody,
-            manfaat = hargaBody,
-            efekSamping = pengaruhBody,
+            harga = hargaBody,
+            pengaruh = pengaruhBody,
             file = filePart,
         )
     }
@@ -791,7 +785,7 @@ fun PlantsEditUIpc(
             minLines = 3
         )
 
-        // Manfaat
+        // Harga
         OutlinedTextField(
             value = dataharga,
             onValueChange = { dataharga = it },
@@ -804,7 +798,7 @@ fun PlantsEditUIpc(
             ),
             label = {
                 Text(
-                    text = "harga",
+                    text = "Harga",
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             },
@@ -822,7 +816,7 @@ fun PlantsEditUIpc(
             minLines = 3
         )
 
-        // Efek Samping
+        // Pengaruh
         OutlinedTextField(
             value = datapengaruh,
             onValueChange = { datapengaruh = it },
@@ -835,7 +829,7 @@ fun PlantsEditUIpc(
             ),
             label = {
                 Text(
-                    text = "pengaruh",
+                    text = "Pengaruh",
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             },
@@ -887,7 +881,7 @@ fun PlantsEditUIpc(
                     AlertHelper.show(
                         alertState,
                         AlertType.ERROR,
-                        "Informasi manfaat tidak boleh kosong!"
+                        "Informasi harga tidak boleh kosong!"
                     )
                     return@FloatingActionButton
                 }
@@ -896,7 +890,7 @@ fun PlantsEditUIpc(
                     AlertHelper.show(
                         alertState,
                         AlertType.ERROR,
-                        "Informasi efek samping tidak boleh kosong!"
+                        "Informasi pengaruh tidak boleh kosong!"
                     )
                     return@FloatingActionButton
                 }
@@ -947,4 +941,3 @@ fun PlantsEditUIpc(
         )
     }
 }
-

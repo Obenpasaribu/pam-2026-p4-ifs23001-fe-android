@@ -269,9 +269,6 @@ fun PlantsDetailScreenpc(
     // Dapatkan Komponen berdasarkan ID
     LaunchedEffect(Unit) {
         isLoading = true
-        // Reset status plant action
-        uiStatePlant.plantAction = PlantActionUIState.Loading
-        uiStatePlant.plant = PlantUIState.Loading
         plantViewModel.getPlantByIdpc(plantId)
     }
 
@@ -305,7 +302,6 @@ fun PlantsDetailScreenpc(
                     ConstHelper.RouteNames.Plantspc.path,
                     true
                 )
-                uiStatePlant.plant = PlantUIState.Loading
                 isLoading = false
             }
             is PlantActionUIState.Error -> {
@@ -464,7 +460,7 @@ fun PlantsDetailUIpc(
 
         }
 
-        // Manfaat
+        // Harga
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -480,7 +476,7 @@ fun PlantsDetailUIpc(
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "Manfaat",
+                    text = "Harga",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -498,7 +494,7 @@ fun PlantsDetailUIpc(
 
         }
 
-        // Efek Samping
+        // Pengaruh
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -514,7 +510,7 @@ fun PlantsDetailUIpc(
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "Efek Samping",
+                    text = "Pengaruh",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.SemiBold
                 )

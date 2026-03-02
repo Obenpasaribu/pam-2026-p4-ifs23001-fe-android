@@ -7,6 +7,9 @@ import org.delcom.pam_p4_ifs23001.network.data.ResponseMessage
 import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlant
 import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlantAdd
 import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlants
+import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlantpc
+import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlantAddpc
+import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlantspc
 import org.delcom.pam_p4_ifs23001.network.plants.data.ResponseProfile
 
 class PlantRepository (private val plantApiService: PlantApiService): IPlantRepository {
@@ -69,6 +72,63 @@ class PlantRepository (private val plantApiService: PlantApiService): IPlantRepo
     override suspend fun deletePlant(plantId: String): ResponseMessage<String?> {
         return SuspendHelper.safeApiCall {
             plantApiService.deletePlant(plantId)
+        }
+    }
+
+    // PC Implementations
+    override suspend fun getAllPlantspc(search: String?): ResponseMessage<ResponsePlantspc?> {
+        return SuspendHelper.safeApiCall {
+            plantApiService.getAllPlantspc(search)
+        }
+    }
+
+    override suspend fun postPlantpc(
+        nama: RequestBody,
+        deskripsi: RequestBody,
+        harga: RequestBody,
+        pengaruh: RequestBody,
+        file: MultipartBody.Part
+    ): ResponseMessage<ResponsePlantAddpc?> {
+        return SuspendHelper.safeApiCall {
+            plantApiService.postPlantpc(
+                nama = nama,
+                deskripsi = deskripsi,
+                harga = harga,
+                pengaruh = pengaruh,
+                file = file
+            )
+        }
+    }
+
+    override suspend fun getPlantByIdpc(plantIdpc: String): ResponseMessage<ResponsePlantpc?> {
+        return SuspendHelper.safeApiCall {
+            plantApiService.getPlantByIdpc(plantIdpc)
+        }
+    }
+
+    override suspend fun putPlantpc(
+        plantIdpc: String,
+        nama: RequestBody,
+        deskripsi: RequestBody,
+        harga: RequestBody,
+        pengaruh: RequestBody,
+        file: MultipartBody.Part?
+    ): ResponseMessage<String?> {
+        return SuspendHelper.safeApiCall {
+            plantApiService.putPlantpc(
+                plantIdpc = plantIdpc,
+                nama = nama,
+                deskripsi = deskripsi,
+                harga = harga,
+                pengaruh = pengaruh,
+                file = file
+            )
+        }
+    }
+
+    override suspend fun deletePlantpc(plantIdpc: String): ResponseMessage<String?> {
+        return SuspendHelper.safeApiCall {
+            plantApiService.deletePlantpc(plantIdpc)
         }
     }
 }

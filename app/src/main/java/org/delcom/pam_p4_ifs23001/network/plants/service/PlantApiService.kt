@@ -32,14 +32,15 @@ interface PlantApiService {
 
     // Tambah data Komponen
     @Multipart
-    @POST("/plants")
+    @POST("plants")
     suspend fun postPlant(
         @Part("nama") nama: RequestBody,
         @Part("deskripsi") deskripsi: RequestBody,
-        @Part("manfaat") manfaat: RequestBody,
-        @Part("efekSamping") efekSamping: RequestBody,
+        @Part("harga") manfaat: RequestBody,    // Backend herbal minta key "harga" untuk manfaat
+        @Part("pengaruh") efekSamping: RequestBody, // Backend herbal minta key "pengaruh" untuk efek samping
         @Part file: MultipartBody.Part
     ): ResponseMessage<ResponsePlantAdd?>
+
 
     // Ambil data Komponen berdasarkan ID
     @GET("plants/{plantId}")
@@ -50,13 +51,13 @@ interface PlantApiService {
 
     // Ubah data Komponen
     @Multipart
-    @PUT("/plants/{plantId}")
+    @PUT("plants/{plantId}")
     suspend fun putPlant(
         @Path("plantId") plantId: String,
         @Part("nama") nama: RequestBody,
         @Part("deskripsi") deskripsi: RequestBody,
-        @Part("manfaat") manfaat: RequestBody,
-        @Part("efekSamping") efekSamping: RequestBody,
+        @Part("harga") manfaat: RequestBody,
+        @Part("pengaruh") efekSamping: RequestBody,
         @Part file: MultipartBody.Part? = null
     ): ResponseMessage<String?>
 
@@ -67,7 +68,7 @@ interface PlantApiService {
     ): ResponseMessage<String?>
 
     @Multipart
-    @PUT("/plantspc/{plantId}")
+    @PUT("plantspc/{plantId}")
     suspend fun putPlantpc(
         @Path("plantId") plantIdpc: String,
         @Part("nama") nama: RequestBody,
@@ -88,7 +89,7 @@ interface PlantApiService {
     ): ResponseMessage<ResponsePlantpc?>
 
     @Multipart
-    @POST("/plantspc")
+    @POST("plantspc")
     suspend fun postPlantpc(
         @Part("nama") nama: RequestBody,
         @Part("deskripsi") deskripsi: RequestBody,
