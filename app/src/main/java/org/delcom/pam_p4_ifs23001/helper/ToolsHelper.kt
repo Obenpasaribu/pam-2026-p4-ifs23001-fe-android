@@ -15,6 +15,10 @@ object ToolsHelper {
         return "${BuildConfig.BASE_URL_PC_API}plants/${plantId}/image"
     }
 
+    fun getPlantImageUrlpc(plantIdpc: String): String{
+        return "${BuildConfig.BASE_URL_PC_API}plantspc/${plantIdpc}/image"
+    }
+
     fun getProfilePhotoUrl(): String{
         return "${BuildConfig.BASE_URL_PC_API}profile/photo"
     }

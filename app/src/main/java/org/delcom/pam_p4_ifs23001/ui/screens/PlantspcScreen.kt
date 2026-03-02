@@ -229,7 +229,7 @@ fun PlantItemUIpc(
                 .padding(12.dp)
         ) {
             AsyncImage(
-                model = ToolsHelper.getPlantImageUrl(plant.id),
+                model = ToolsHelper.getPlantImageUrlpc(plant.id),
                 contentDescription = plant.nama,
                 placeholder = painterResource(R.drawable.img_placeholder),
                 error = painterResource(R.drawable.img_placeholder),
