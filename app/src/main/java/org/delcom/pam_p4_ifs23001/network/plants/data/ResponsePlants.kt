@@ -25,7 +25,8 @@ data class ResponsePlantData(
     val manfaat: String,
     val efekSamping: String,
     val createdAt: String,
-    val updatedAt: String
+    val updatedAt: String,
+    val gambar: Int? = null
 )
 
 

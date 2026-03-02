@@ -1,5 +1,6 @@
 package org.delcom.pam_p4_ifs23001.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -30,12 +31,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import org.delcom.pam_p4_ifs23001.R
 import org.delcom.pam_p4_ifs23001.data.DummyData
 import org.delcom.pam_p4_ifs23001.helper.RouteHelper
 import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlantData
@@ -174,12 +178,21 @@ fun PlantItemUI(
                     .background(MaterialTheme.colorScheme.primaryContainer),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Default.Nature,
-                    contentDescription = plant.nama,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(40.dp)
-                )
+                if (plant.gambar != null) {
+                    Image(
+                        painter = painterResource(id = plant.gambar),
+                        contentDescription = plant.nama,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.Nature,
+                        contentDescription = plant.nama,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(40.dp)
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.width(12.dp))
