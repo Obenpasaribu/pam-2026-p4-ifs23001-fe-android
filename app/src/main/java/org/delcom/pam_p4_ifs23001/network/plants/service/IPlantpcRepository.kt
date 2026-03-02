@@ -1,0 +1,46 @@
+package org.delcom.pam_p4_ifs23001.network.plants.service
+
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import org.delcom.pam_p4_ifs23001.network.data.ResponseMessage
+import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlant
+import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlantAdd
+import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlants
+
+
+interface IPlantpcRepository {
+
+    suspend fun getAllPlantspc(
+        search: String? = null
+    ): ResponseMessage<ResponsePlants?>
+
+    // Tambah data Komponen
+    suspend fun postPlantpc(
+        nama: RequestBody,
+        deskripsi: RequestBody,
+        manfaat: RequestBody,
+        efekSamping: RequestBody,
+        file: MultipartBody.Part
+    ): ResponseMessage<ResponsePlantAdd?>
+
+    // Ambil data Komponen berdasarkan ID
+    suspend fun getPlantByIdpc(
+        plantIdpc: String
+    ): ResponseMessage<ResponsePlant?>
+
+
+    // Ubah data Komponen
+    suspend fun putPlantpc(
+        plantIdpc: String,
+        nama: RequestBody,
+        deskripsi: RequestBody,
+        manfaat: RequestBody,
+        efekSamping: RequestBody,
+        file: MultipartBody.Part? = null
+    ): ResponseMessage<String?>
+
+    // Hapus data Komponen
+    suspend fun deletePlantpc(
+        plantIdpc: String
+    ): ResponseMessage<String?>
+}
