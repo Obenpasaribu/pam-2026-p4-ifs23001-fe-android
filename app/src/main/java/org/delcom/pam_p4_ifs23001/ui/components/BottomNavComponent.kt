@@ -57,7 +57,7 @@ sealed class MenuBottomNav(
     object Home : MenuBottomNav(ConstHelper.RouteNames.Home.path, "Home", Icons.Outlined.Home, Icons.Filled.Home)
     object Plants : MenuBottomNav(ConstHelper.RouteNames.Plants.path, "Plants", Icons.Outlined.Nature, Icons.Filled.Nature)
     object Profile : MenuBottomNav(ConstHelper.RouteNames.Profile.path, "Profile", Icons.Outlined.Person, Icons.Filled.Person)
-    object Plantspc : MenuBottomNav(ConstHelper.RouteNames.Plantspc.path, "komponen", Icons.Outlined.Computer, Icons.Filled.Computer)
+    object Plantspc : MenuBottomNav(ConstHelper.RouteNames.Plantspc.path, "PC", Icons.Outlined.Computer, Icons.Filled.Computer)
 }
 
 @Composable

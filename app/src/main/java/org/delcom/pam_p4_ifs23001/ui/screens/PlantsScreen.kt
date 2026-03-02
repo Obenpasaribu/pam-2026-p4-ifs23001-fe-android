@@ -15,16 +15,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Nature
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,70 +30,39 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import coil.compose.AsyncImage
-import org.delcom.pam_p4_ifs23001.R
-import org.delcom.pam_p4_ifs23001.helper.ConstHelper
+import org.delcom.pam_p4_ifs23001.data.DummyData
 import org.delcom.pam_p4_ifs23001.helper.RouteHelper
-import org.delcom.pam_p4_ifs23001.helper.ToolsHelper
 import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlantData
 import org.delcom.pam_p4_ifs23001.ui.components.BottomNavComponent
-import org.delcom.pam_p4_ifs23001.ui.components.LoadingUI
 import org.delcom.pam_p4_ifs23001.ui.components.TopAppBarComponent
-import org.delcom.pam_p4_ifs23001.ui.viewmodels.PlantViewModel
-import org.delcom.pam_p4_ifs23001.ui.viewmodels.PlantsUIState
 
 @Composable
 fun PlantsScreen(
-    navController: NavHostController,
-    plantViewModel: PlantViewModel
+    navController: NavHostController
 ) {
-    // Ambil data dari viewmodel
-    val uiStatePlant by plantViewModel.uiState.collectAsState()
-
-    var isLoading by remember { mutableStateOf(false) }
     var searchQuery by remember {
         mutableStateOf(TextFieldValue(""))
     }
 
-    // Muat data
-    var plants by remember { mutableStateOf<List<ResponsePlantData>>(emptyList()) }
+    // Muat data statis
+    var plants by remember { mutableStateOf(DummyData.getPlantsData()) }
 
-    fun fetchPlantsData(){
-        isLoading = true
-        plantViewModel.getAllPlants(searchQuery.text)
-    }
-
-    // Picu pengambilan data plants
-    LaunchedEffect(Unit) {
-        fetchPlantsData()
-    }
-
-    // Picu ketika terjadi perubahan data plants
-    LaunchedEffect(uiStatePlant.plants){
-        if(uiStatePlant.plants !is PlantsUIState.Loading){
-            isLoading = false
-
-            plants = if(uiStatePlant.plants is PlantsUIState.Success) {
-                (uiStatePlant.plants as PlantsUIState.Success).data as List<ResponsePlantData>
-            }else{
-                emptyList()
+    // Filter data berdasarkan search
+    LaunchedEffect(searchQuery.text) {
+        plants = if (searchQuery.text.isEmpty()) {
+            DummyData.getPlantsData()
+        } else {
+            DummyData.getPlantsData().filter {
+                it.nama.contains(searchQuery.text, ignoreCase = true) ||
+                it.deskripsi.contains(searchQuery.text, ignoreCase = true)
             }
         }
-    }
-
-    // Tampilkan halaman loading
-    if(isLoading){
-        LoadingUI()
-        return
     }
 
     fun onOpen(plantId: String) {
@@ -113,14 +80,15 @@ fun PlantsScreen(
         // Top App Bar
         TopAppBarComponent(
             navController = navController,
-            title = "Plants", showBackButton = false,
+            title = "Plants", 
+            showBackButton = false,
             withSearch = true,
             searchQuery = searchQuery,
             onSearchQueryChange = { query ->
                 searchQuery = query
             },
             onSearchAction = {
-                fetchPlantsData()
+                // Search sudah dihandle oleh LaunchedEffect
             }
         )
         // Content
@@ -132,35 +100,6 @@ fun PlantsScreen(
                 plants = plants,
                 onOpen = ::onOpen
             )
-
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-            )
-            {
-                // Floating Action Button
-                FloatingActionButton(
-                    onClick = {
-                        RouteHelper.to(
-                            navController,
-                            ConstHelper.RouteNames
-                                .PlantsAdd
-                                .path
-                        )
-                    },
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd) // pojok kanan bawah
-                        .padding(16.dp) // jarak dari tepi
-                    ,
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Tambah Komponen"
-                    )
-                }
-            }
         }
         // Bottom Nav
         BottomNavComponent(navController = navController)
@@ -228,16 +167,20 @@ fun PlantItemUI(
                 .fillMaxWidth()
                 .padding(12.dp)
         ) {
-            AsyncImage(
-                model = ToolsHelper.getPlantImageUrl(plant.id),
-                contentDescription = plant.nama,
-                placeholder = painterResource(R.drawable.img_placeholder),
-                error = painterResource(R.drawable.img_placeholder),
+            Box(
                 modifier = Modifier
                     .size(70.dp)
-                    .clip(MaterialTheme.shapes.medium),
-                contentScale = ContentScale.Crop
-            )
+                    .clip(MaterialTheme.shapes.medium)
+                    .background(MaterialTheme.colorScheme.primaryContainer),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Nature,
+                    contentDescription = plant.nama,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(40.dp)
+                )
+            }
 
             Spacer(modifier = Modifier.width(12.dp))
 
@@ -262,15 +205,4 @@ fun PlantItemUI(
             }
         }
     }
-}
-
-@Preview(showBackground = true, name = "Light Mode")
-@Composable
-fun PreviewPlantsUI() {
-//    DelcomTheme {
-//        PlantsUI(
-//            plants = DummyData.getPlantsData(),
-//            onOpen = {}
-//        )
-//    }
 }

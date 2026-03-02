@@ -12,9 +12,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Nature
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -35,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import org.delcom.pam_p4_ifs23001.R
+import org.delcom.pam_p4_ifs23001.data.DummyData
 import org.delcom.pam_p4_ifs23001.helper.ConstHelper
 import org.delcom.pam_p4_ifs23001.helper.RouteHelper
 import org.delcom.pam_p4_ifs23001.helper.SuspendHelper
@@ -56,101 +59,19 @@ import org.delcom.pam_p4_ifs23001.ui.viewmodels.PlantViewModel
 @Composable
 fun PlantsDetailScreen(
     navController: NavHostController,
-    snackbarHost: SnackbarHostState,
-    plantViewModel: PlantViewModel,
     plantId: String
 ) {
-    // Ambil data dari viewmodel
-    val uiStatePlant by plantViewModel.uiState.collectAsState()
-    var isLoading by remember { mutableStateOf(false) }
-    var isConfirmDelete by remember { mutableStateOf(false) }
-
-    // Muat data
-    var plant by remember { mutableStateOf<ResponsePlantData?>(null) }
-
-    // Dapatkan Komponen berdasarkan ID
-    LaunchedEffect(Unit) {
-        isLoading = true
-        // Reset status plant action
-        uiStatePlant.plantAction = PlantActionUIState.Loading
-        uiStatePlant.plant = PlantUIState.Loading
-        plantViewModel.getPlantById(plantId)
+    // Muat data statis
+    val plant = remember(plantId) {
+        DummyData.getPlantsData().find { it.id == plantId }
     }
 
-    // Picu ulang ketika data Komponen berubah
-    LaunchedEffect(uiStatePlant.plant) {
-        if(uiStatePlant.plant !is PlantUIState.Loading){
-            if(uiStatePlant.plant is PlantUIState.Success){
-                plant = (uiStatePlant.plant as PlantUIState.Success).data as ResponsePlantData
-                isLoading = false
-            } else {
-                RouteHelper.back(navController)
-            }
+    if (plant == null) {
+        LaunchedEffect(Unit) {
+            RouteHelper.back(navController)
         }
-    }
-
-    fun onDelete(){
-        isLoading = true
-        plantViewModel.deletePlant(plantId)
-    }
-
-    LaunchedEffect(uiStatePlant.plantAction) {
-        when (val state = uiStatePlant.plantAction) {
-            is PlantActionUIState.Success -> {
-                SuspendHelper.showSnackBar(
-                    snackbarHost = snackbarHost,
-                    type = SnackBarType.SUCCESS,
-                    message = state.message
-                )
-                RouteHelper.to(
-                    navController,
-                    ConstHelper.RouteNames.Plants.path,
-                    true
-                )
-                uiStatePlant.plant = PlantUIState.Loading
-                isLoading = false
-            }
-            is PlantActionUIState.Error -> {
-                SuspendHelper.showSnackBar(
-                    snackbarHost = snackbarHost,
-                    type = SnackBarType.ERROR,
-                    message = state.message
-                )
-                isLoading = false
-            }
-            else -> {}
-        }
-    }
-
-    // Tampilkan halaman loading
-    if(isLoading || plant == null){
-        LoadingUI()
         return
     }
-
-    // Menu item details
-    val detailMenuItems = listOf(
-        TopAppBarMenuItem(
-            text = "Ubah Data",
-            icon = Icons.Filled.Edit,
-            route = null,
-            onClick = {
-                RouteHelper.to(
-                    navController,
-                    ConstHelper.RouteNames.PlantsEdit.path
-                        .replace("{plantId}", plant!!.id),
-                )
-            }
-        ),
-        TopAppBarMenuItem(
-            text = "Hapus Data",
-            icon = Icons.Filled.Delete,
-            route = null,
-            onClick = {
-                isConfirmDelete = true
-            }
-        ),
-    )
 
     Column(
         modifier = Modifier
@@ -161,9 +82,8 @@ fun PlantsDetailScreen(
         // Top App Bar
         TopAppBarComponent(
             navController = navController,
-            title = plant!!.nama,
-            showBackButton = true,
-            customMenuItems = detailMenuItems
+            title = plant.nama,
+            showBackButton = true
         )
         // Content
         Box(
@@ -172,21 +92,7 @@ fun PlantsDetailScreen(
         ) {
             // Content UI
             PlantsDetailUI(
-                plant = plant!!
-            )
-            // Bottom Dialog to Confirmation Delete
-            BottomDialog(
-                type = BottomDialogType.ERROR,
-                show = isConfirmDelete,
-                onDismiss = { isConfirmDelete = false },
-                title = "Konfirmasi Hapus Data",
-                message = "Apakah Anda yakin ingin menghapus data ini?",
-                confirmText = "Ya, Hapus",
-                onConfirm = {
-                    onDelete()
-                },
-                cancelText = "Batal",
-                destructiveAction = true
+                plant = plant
             )
         }
         // Bottom Nav
@@ -205,22 +111,21 @@ fun PlantsDetailUI(
             .verticalScroll(rememberScrollState())
     )
     {
-        // Gambar
+        // Gambar Placeholder
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(vertical = 16.dp)
         )
         {
-            AsyncImage(
-                model = ToolsHelper.getPlantImageUrl(plant.id),
+            Icon(
+                imageVector = Icons.Default.Nature,
                 contentDescription = plant.nama,
-                placeholder = painterResource(R.drawable.img_placeholder),
-                error = painterResource(R.drawable.img_placeholder),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(250.dp),
-                contentScale = ContentScale.Fit
+                    .height(250.dp)
+                    .background(MaterialTheme.colorScheme.primaryContainer),
+                tint = MaterialTheme.colorScheme.primary
             )
 
             Text(

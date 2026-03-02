@@ -19,11 +19,9 @@ import androidx.navigation.navArgument
 import org.delcom.pam_p4_ifs23001.helper.ConstHelper
 import org.delcom.pam_p4_ifs23001.ui.components.CustomSnackbar
 import org.delcom.pam_p4_ifs23001.ui.screens.HomeScreen
-import org.delcom.pam_p4_ifs23001.ui.screens.PlantsAddScreen
 import org.delcom.pam_p4_ifs23001.ui.screens.PlantsAddScreenpc
 import org.delcom.pam_p4_ifs23001.ui.screens.PlantsDetailScreen
 import org.delcom.pam_p4_ifs23001.ui.screens.PlantsDetailScreenpc
-import org.delcom.pam_p4_ifs23001.ui.screens.PlantsEditScreen
 import org.delcom.pam_p4_ifs23001.ui.screens.PlantsEditScreenpc
 import org.delcom.pam_p4_ifs23001.ui.screens.PlantsScreen
 import org.delcom.pam_p4_ifs23001.ui.screens.PlantsScreenpc
@@ -71,17 +69,31 @@ fun UIApp(
                 )
             }
 
-            // Plants
+            // Plants (Data Statis)
             composable(
                 route = ConstHelper.RouteNames.Plants.path,
             ) { _ ->
                 PlantsScreen(
-                    navController = navController,
-                    plantViewModel = plantViewModel
+                    navController = navController
                 )
             }
 
-            // Plants
+            // Plants Detail (Data Statis)
+            composable(
+                route = ConstHelper.RouteNames.PlantsDetail.path,
+                arguments = listOf(
+                    navArgument("plantId") { type = NavType.StringType },
+                )
+            ) { backStackEntry ->
+                val plantId = backStackEntry.arguments?.getString("plantId") ?: ""
+
+                PlantsDetailScreen(
+                    navController = navController,
+                    plantId = plantId
+                )
+            }
+
+            // PC (Data API)
             composable(
                 route = ConstHelper.RouteNames.Plantspc.path,
             ) { _ ->
@@ -90,6 +102,8 @@ fun UIApp(
                     plantViewModel = plantViewModel
                 )
             }
+            
+            // PC Add
             composable(
                 route = ConstHelper.RouteNames.PlantsAddpc.path,
             ) { _ ->
@@ -99,7 +113,8 @@ fun UIApp(
                     plantViewModel = plantViewModel
                 )
             }
-            // Plants Detail
+            
+            // PC Detail
             composable(
                 route = ConstHelper.RouteNames.PlantsDetailpc.path,
                 arguments = listOf(
@@ -116,7 +131,7 @@ fun UIApp(
                 )
             }
 
-            // Plants Edit
+            // PC Edit
             composable(
                 route = ConstHelper.RouteNames.PlantsEditpc.path,
                 arguments = listOf(
@@ -132,51 +147,6 @@ fun UIApp(
                     plantId = plantId
                 )
             }
-            // Plants Add
-            composable(
-                route = ConstHelper.RouteNames.PlantsAdd.path,
-            ) { _ ->
-                PlantsAddScreen(
-                    navController = navController,
-                    snackbarHost = snackbarHostState,
-                    plantViewModel = plantViewModel
-                )
-            }
-
-            // Plants Detail
-            composable(
-                route = ConstHelper.RouteNames.PlantsDetail.path,
-                arguments = listOf(
-                    navArgument("plantId") { type = NavType.StringType },
-                )
-            ) { backStackEntry ->
-                val plantId = backStackEntry.arguments?.getString("plantId") ?: ""
-
-                PlantsDetailScreen(
-                    navController = navController,
-                    snackbarHost = snackbarHostState,
-                    plantViewModel = plantViewModel,
-                    plantId = plantId
-                )
-            }
-
-            // Plants Edit
-            composable(
-                route = ConstHelper.RouteNames.PlantsEdit.path,
-                arguments = listOf(
-                    navArgument("plantId") { type = NavType.StringType },
-                )
-            ) { backStackEntry ->
-                val plantId = backStackEntry.arguments?.getString("plantId") ?: ""
-
-                PlantsEditScreen(
-                    navController = navController,
-                    snackbarHost = snackbarHostState,
-                    plantViewModel = plantViewModel,
-                    plantId = plantId
-                )
-            }
         }
     }
-
 }
