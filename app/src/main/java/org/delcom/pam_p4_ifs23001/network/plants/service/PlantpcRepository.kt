@@ -18,16 +18,16 @@ class PlantpcRepository (private val plantApiService: PlantApiService): IPlantpc
     override suspend fun postPlantpc(
         nama: RequestBody,
         deskripsi: RequestBody,
-        manfaat: RequestBody,
-        efekSamping: RequestBody,
+        harga: RequestBody,
+        pengaruh: RequestBody,
         file: MultipartBody.Part
     ): ResponseMessage<ResponsePlantAddpc?> {
         return SuspendHelper.safeApiCall {
             plantApiService.postPlantpc(
                 nama = nama,
                 deskripsi = deskripsi,
-                harga = manfaat,
-                pengaruh = efekSamping,
+                harga = harga,
+                pengaruh = pengaruh,
                 file = file
             )
         }
@@ -43,8 +43,8 @@ class PlantpcRepository (private val plantApiService: PlantApiService): IPlantpc
         plantIdpc: String,
         nama: RequestBody,
         deskripsi: RequestBody,
-        manfaat: RequestBody,
-        efekSamping: RequestBody,
+        harga: RequestBody,
+        pengaruh: RequestBody,
         file: MultipartBody.Part?
     ): ResponseMessage<String?> {
         return SuspendHelper.safeApiCall {
@@ -52,8 +52,8 @@ class PlantpcRepository (private val plantApiService: PlantApiService): IPlantpc
                 plantIdpc = plantIdpc,
                 nama = nama,
                 deskripsi = deskripsi,
-                harga = manfaat,
-                pengaruh = efekSamping,
+                harga = harga,
+                pengaruh = pengaruh,
                 file = file
             )
         }

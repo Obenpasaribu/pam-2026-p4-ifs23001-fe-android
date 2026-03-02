@@ -18,8 +18,8 @@ interface IPlantpcRepository {
     suspend fun postPlantpc(
         nama: RequestBody,
         deskripsi: RequestBody,
-        manfaat: RequestBody,
-        efekSamping: RequestBody,
+        harga: RequestBody,
+        pengaruh: RequestBody,
         file: MultipartBody.Part
     ): ResponseMessage<ResponsePlantAddpc?>
 
@@ -34,8 +34,8 @@ interface IPlantpcRepository {
         plantIdpc: String,
         nama: RequestBody,
         deskripsi: RequestBody,
-        manfaat: RequestBody,
-        efekSamping: RequestBody,
+        harga: RequestBody,
+        pengaruh: RequestBody,
         file: MultipartBody.Part? = null
     ): ResponseMessage<String?>
 

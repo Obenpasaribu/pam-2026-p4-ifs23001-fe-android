@@ -36,8 +36,8 @@ interface PlantApiService {
     suspend fun postPlant(
         @Part("nama") nama: RequestBody,
         @Part("deskripsi") deskripsi: RequestBody,
-        @Part("harga") manfaat: RequestBody,    // Backend herbal minta key "harga" untuk manfaat
-        @Part("pengaruh") efekSamping: RequestBody, // Backend herbal minta key "pengaruh" untuk efek samping
+        @Part("harga") manfaat: RequestBody,
+        @Part("pengaruh") efekSamping: RequestBody,
         @Part file: MultipartBody.Part
     ): ResponseMessage<ResponsePlantAdd?>
 
