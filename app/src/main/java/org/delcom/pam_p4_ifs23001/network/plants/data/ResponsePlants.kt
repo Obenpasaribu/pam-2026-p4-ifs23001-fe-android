@@ -49,8 +49,8 @@ data class ResponsePlantDatapc (
     val id: String,
     val nama: String,
     val deskripsi: String,
-    val manfaat: String,
-    val efekSamping: String,
+    val harga: String,
+    val pengaruh: String,
     val createdAt: String,
     val updatedAt: String
 )

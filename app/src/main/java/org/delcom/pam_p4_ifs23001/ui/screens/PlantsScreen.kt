@@ -85,7 +85,7 @@ fun PlantsScreen(
             isLoading = false
 
             plants = if(uiStatePlant.plants is PlantsUIState.Success) {
-                (uiStatePlant.plants as PlantsUIState.Success).data
+                (uiStatePlant.plants as PlantsUIState.Success).data as List<ResponsePlantData>
             }else{
                 emptyList()
             }
@@ -274,4 +274,3 @@ fun PreviewPlantsUI() {
 //        )
 //    }
 }
-

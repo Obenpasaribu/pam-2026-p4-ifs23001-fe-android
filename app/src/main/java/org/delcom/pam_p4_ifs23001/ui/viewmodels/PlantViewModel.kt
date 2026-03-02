@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlantData
+import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlantDatapc
 import org.delcom.pam_p4_ifs23001.network.plants.data.ResponseProfile
 import org.delcom.pam_p4_ifs23001.network.plants.service.IPlantRepository
 import org.delcom.pam_p4_ifs23001.network.plants.service.IPlantpcRepository // Import repository PC
@@ -23,13 +24,13 @@ sealed interface ProfileUIState {
 }
 
 sealed interface PlantsUIState {
-    data class Success(val data: List<ResponsePlantData>) : PlantsUIState
+    data class Success(val data: List<Any>) : PlantsUIState
     data class Error(val message: String) : PlantsUIState
     object Loading : PlantsUIState
 }
 
 sealed interface PlantUIState {
-    data class Success(val data: ResponsePlantData) : PlantUIState
+    data class Success(val data: Any) : PlantUIState
     data class Error(val message: String) : PlantUIState
     object Loading : PlantUIState
 }
@@ -183,7 +184,7 @@ class PlantViewModel @Inject constructor(
                 repositorypc.postPlantpc(nama, deskripsi, manfaat, efekSamping, file) // Gunakan repositorypc
             }.fold(
                 onSuccess = { response ->
-                    if (response.status == "success") PlantActionUIState.Success(response.data!!.plantId)
+                    if (response.status == "success") PlantActionUIState.Success(response.data!!.plantIdpc)
                     else PlantActionUIState.Error(response.message)
                 },
                 onFailure = { PlantActionUIState.Error(it.message ?: "Unknown error") }

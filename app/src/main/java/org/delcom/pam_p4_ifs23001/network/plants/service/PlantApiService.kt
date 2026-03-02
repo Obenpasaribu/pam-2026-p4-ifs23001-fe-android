@@ -6,6 +6,9 @@ import org.delcom.pam_p4_ifs23001.network.data.ResponseMessage
 import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlant
 import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlantAdd
 import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlants
+import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlantpc
+import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlantAddpc
+import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlantspc
 import org.delcom.pam_p4_ifs23001.network.plants.data.ResponseProfile
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -64,39 +67,39 @@ interface PlantApiService {
     ): ResponseMessage<String?>
 
     @Multipart
-    @PUT("/plants/{plantId}")
+    @PUT("/plantspc/{plantId}")
     suspend fun putPlantpc(
         @Path("plantId") plantIdpc: String,
         @Part("nama") nama: RequestBody,
         @Part("deskripsi") deskripsi: RequestBody,
-        @Part("manfaat") manfaat: RequestBody,
-        @Part("efekSamping") efekSamping: RequestBody,
+        @Part("harga") harga: RequestBody,
+        @Part("pengaruh") pengaruh: RequestBody,
         @Part file: MultipartBody.Part? = null
     ): ResponseMessage<String?>
 
-    @DELETE("plants/{plantId}")
+    @DELETE("plantspc/{plantId}")
     suspend fun deletePlantpc(
         @Path("plantId") plantIdpc: String
     ): ResponseMessage<String?>
 
-    @GET("plants/{plantId}")
+    @GET("plantspc/{plantId}")
     suspend fun getPlantByIdpc(
         @Path("plantId") plantIdpc: String
-    ): ResponseMessage<ResponsePlant?>
+    ): ResponseMessage<ResponsePlantpc?>
 
     @Multipart
-    @POST("/plants")
+    @POST("/plantspc")
     suspend fun postPlantpc(
         @Part("nama") nama: RequestBody,
         @Part("deskripsi") deskripsi: RequestBody,
-        @Part("manfaat") manfaat: RequestBody,
-        @Part("efekSamping") efekSamping: RequestBody,
+        @Part("harga") harga: RequestBody,
+        @Part("pengaruh") pengaruh: RequestBody,
         @Part file: MultipartBody.Part
-    ): ResponseMessage<ResponsePlantAdd?>
+    ): ResponseMessage<ResponsePlantAddpc?>
 
-    @GET("plants")
+    @GET("plantspc")
     suspend fun getAllPlantspc(
         @Query("search") search: String? = null
-    ): ResponseMessage<ResponsePlants?>
+    ): ResponseMessage<ResponsePlantspc?>
 
 }

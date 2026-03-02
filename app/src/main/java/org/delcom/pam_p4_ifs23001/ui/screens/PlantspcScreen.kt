@@ -46,7 +46,7 @@ import org.delcom.pam_p4_ifs23001.R
 import org.delcom.pam_p4_ifs23001.helper.ConstHelper
 import org.delcom.pam_p4_ifs23001.helper.RouteHelper
 import org.delcom.pam_p4_ifs23001.helper.ToolsHelper
-import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlantData
+import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlantDatapc
 import org.delcom.pam_p4_ifs23001.ui.components.BottomNavComponent
 import org.delcom.pam_p4_ifs23001.ui.components.LoadingUI
 import org.delcom.pam_p4_ifs23001.ui.components.TopAppBarComponent
@@ -67,7 +67,7 @@ fun PlantsScreenpc(
     }
 
     // Muat data
-    var plants by remember { mutableStateOf<List<ResponsePlantData>>(emptyList()) }
+    var plants by remember { mutableStateOf<List<ResponsePlantDatapc>>(emptyList()) }
 
     fun fetchPlantsData(){
         isLoading = true
@@ -85,7 +85,7 @@ fun PlantsScreenpc(
             isLoading = false
 
             plants = if(uiStatePlant.plants is PlantsUIState.Success) {
-                (uiStatePlant.plants as PlantsUIState.Success).data
+                (uiStatePlant.plants as PlantsUIState.Success).data as List<ResponsePlantDatapc>
             }else{
                 emptyList()
             }
@@ -101,7 +101,7 @@ fun PlantsScreenpc(
     fun onOpen(plantId: String) {
         RouteHelper.to(
             navController = navController,
-            destination = "plants/${plantId}"
+            destination = "plantspc/${plantId}"
         )
     }
 
@@ -113,7 +113,7 @@ fun PlantsScreenpc(
         // Top App Bar
         TopAppBarComponent(
             navController = navController,
-            title = "Plants", showBackButton = false,
+            title = "PC", showBackButton = false,
             withSearch = true,
             searchQuery = searchQuery,
             onSearchQueryChange = { query ->
@@ -169,7 +169,7 @@ fun PlantsScreenpc(
 
 @Composable
 fun PlantsUIpc(
-    plants: List<ResponsePlantData>,
+    plants: List<ResponsePlantDatapc>,
     onOpen: (String) -> Unit
 ) {
     LazyColumn(
@@ -209,7 +209,7 @@ fun PlantsUIpc(
 
 @Composable
 fun PlantItemUIpc(
-    plant: ResponsePlantData,
+    plant: ResponsePlantDatapc,
     onOpen: (String) -> Unit
 ) {
     Card(

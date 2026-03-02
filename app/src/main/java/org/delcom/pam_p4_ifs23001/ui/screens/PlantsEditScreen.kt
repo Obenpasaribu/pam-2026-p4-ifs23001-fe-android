@@ -65,6 +65,7 @@ import org.delcom.pam_p4_ifs23001.helper.ToolsHelper
 import org.delcom.pam_p4_ifs23001.helper.ToolsHelper.toRequestBodyText
 import org.delcom.pam_p4_ifs23001.helper.ToolsHelper.uriToMultipart
 import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlantData
+import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlantDatapc
 import org.delcom.pam_p4_ifs23001.ui.components.BottomNavComponent
 import org.delcom.pam_p4_ifs23001.ui.components.LoadingUI
 import org.delcom.pam_p4_ifs23001.ui.components.TopAppBarComponent
@@ -99,7 +100,7 @@ fun PlantsEditScreen(
     LaunchedEffect(uiStatePlant.plant) {
         if (uiStatePlant.plant !is PlantUIState.Loading) {
             if (uiStatePlant.plant is PlantUIState.Success) {
-                plant = (uiStatePlant.plant as PlantUIState.Success).data
+                plant = (uiStatePlant.plant as PlantUIState.Success).data as ResponsePlantData
                 isLoading = false
             } else {
                 RouteHelper.back(navController)
@@ -527,7 +528,7 @@ fun PlantsEditScreenpc(
     var isLoading by remember { mutableStateOf(false) }
 
     // Muat data
-    var plant by remember { mutableStateOf<ResponsePlantData?>(null) }
+    var plant by remember { mutableStateOf<ResponsePlantDatapc?>(null) }
 
     // Dapatkan Komponen berdasarkan ID
     LaunchedEffect(Unit) {
@@ -542,7 +543,7 @@ fun PlantsEditScreenpc(
     LaunchedEffect(uiStatePlant.plant) {
         if (uiStatePlant.plant !is PlantUIState.Loading) {
             if (uiStatePlant.plant is PlantUIState.Success) {
-                plant = (uiStatePlant.plant as PlantUIState.Success).data
+                plant = (uiStatePlant.plant as PlantUIState.Success).data as ResponsePlantDatapc
                 isLoading = false
             } else {
                 RouteHelper.back(navController)
@@ -556,16 +557,16 @@ fun PlantsEditScreenpc(
         context: Context,
         nama: String,
         deskripsi: String,
-        manfaat: String,
-        efekSamping: String,
+        harga: String,
+        pengaruh: String,
         file: Uri? = null
     ) {
         isLoading = true
 
         val namaBody = nama.toRequestBodyText()
         val deskripsiBody = deskripsi.toRequestBodyText()
-        val manfaatBody = manfaat.toRequestBodyText()
-        val efekBody = efekSamping.toRequestBodyText()
+        val hargaBody = harga.toRequestBodyText()
+        val pengaruhBody = pengaruh.toRequestBodyText()
 
         var filePart: MultipartBody.Part? = null
         if (file != null) {
@@ -576,8 +577,8 @@ fun PlantsEditScreenpc(
             plantId = plantId,
             nama = namaBody,
             deskripsi = deskripsiBody,
-            manfaat = manfaatBody,
-            efekSamping = efekBody,
+            manfaat = hargaBody,
+            efekSamping = pengaruhBody,
             file = filePart,
         )
     }
@@ -648,7 +649,7 @@ fun PlantsEditScreenpc(
 
 @Composable
 fun PlantsEditUIpc(
-    plant: ResponsePlantData,
+    plant: ResponsePlantDatapc,
     onSave: (
         Context,
         String,
@@ -663,8 +664,8 @@ fun PlantsEditUIpc(
     var dataFile by remember { mutableStateOf<Uri?>(null) }
     var dataNama by remember { mutableStateOf(plant.nama) }
     var dataDeskripsi by remember { mutableStateOf(plant.deskripsi) }
-    var dataManfaat by remember { mutableStateOf(plant.manfaat) }
-    var dataEfekSamping by remember { mutableStateOf(plant.efekSamping) }
+    var dataharga by remember { mutableStateOf(plant.harga) }
+    var datapengaruh by remember { mutableStateOf(plant.pengaruh) }
     val context = LocalContext.current
 
     // Focus manager
@@ -792,8 +793,8 @@ fun PlantsEditUIpc(
 
         // Manfaat
         OutlinedTextField(
-            value = dataManfaat,
-            onValueChange = { dataManfaat = it },
+            value = dataharga,
+            onValueChange = { dataharga = it },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -803,7 +804,7 @@ fun PlantsEditUIpc(
             ),
             label = {
                 Text(
-                    text = "Manfaat",
+                    text = "harga",
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             },
@@ -823,8 +824,8 @@ fun PlantsEditUIpc(
 
         // Efek Samping
         OutlinedTextField(
-            value = dataEfekSamping,
-            onValueChange = { dataEfekSamping = it },
+            value = datapengaruh,
+            onValueChange = { datapengaruh = it },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -834,7 +835,7 @@ fun PlantsEditUIpc(
             ),
             label = {
                 Text(
-                    text = "Efek Samping",
+                    text = "pengaruh",
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             },
@@ -882,7 +883,7 @@ fun PlantsEditUIpc(
                     return@FloatingActionButton
                 }
 
-                if (dataManfaat.isEmpty()) {
+                if (dataharga.isEmpty()) {
                     AlertHelper.show(
                         alertState,
                         AlertType.ERROR,
@@ -891,7 +892,7 @@ fun PlantsEditUIpc(
                     return@FloatingActionButton
                 }
 
-                if (dataEfekSamping.isEmpty()) {
+                if (datapengaruh.isEmpty()) {
                     AlertHelper.show(
                         alertState,
                         AlertType.ERROR,
@@ -904,8 +905,8 @@ fun PlantsEditUIpc(
                     context,
                     dataNama,
                     dataDeskripsi,
-                    dataManfaat,
-                    dataEfekSamping,
+                    dataharga,
+                    datapengaruh,
                     dataFile
                 )
             },

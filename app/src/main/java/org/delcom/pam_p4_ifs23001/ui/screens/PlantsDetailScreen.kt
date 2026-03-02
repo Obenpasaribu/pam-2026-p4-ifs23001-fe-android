@@ -41,6 +41,7 @@ import org.delcom.pam_p4_ifs23001.helper.SuspendHelper
 import org.delcom.pam_p4_ifs23001.helper.SuspendHelper.SnackBarType
 import org.delcom.pam_p4_ifs23001.helper.ToolsHelper
 import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlantData
+import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlantDatapc
 import org.delcom.pam_p4_ifs23001.ui.components.BottomDialog
 import org.delcom.pam_p4_ifs23001.ui.components.BottomDialogType
 import org.delcom.pam_p4_ifs23001.ui.components.BottomNavComponent
@@ -80,7 +81,7 @@ fun PlantsDetailScreen(
     LaunchedEffect(uiStatePlant.plant) {
         if(uiStatePlant.plant !is PlantUIState.Loading){
             if(uiStatePlant.plant is PlantUIState.Success){
-                plant = (uiStatePlant.plant as PlantUIState.Success).data
+                plant = (uiStatePlant.plant as PlantUIState.Success).data as ResponsePlantData
                 isLoading = false
             } else {
                 RouteHelper.back(navController)
@@ -358,7 +359,7 @@ fun PlantsDetailScreenpc(
     var isConfirmDelete by remember { mutableStateOf(false) }
 
     // Muat data
-    var plant by remember { mutableStateOf<ResponsePlantData?>(null) }
+    var plant by remember { mutableStateOf<ResponsePlantDatapc?>(null) }
 
     // Dapatkan Komponen berdasarkan ID
     LaunchedEffect(Unit) {
@@ -373,7 +374,7 @@ fun PlantsDetailScreenpc(
     LaunchedEffect(uiStatePlant.plant) {
         if(uiStatePlant.plant !is PlantUIState.Loading){
             if(uiStatePlant.plant is PlantUIState.Success){
-                plant = (uiStatePlant.plant as PlantUIState.Success).data
+                plant = (uiStatePlant.plant as PlantUIState.Success).data as ResponsePlantDatapc
                 isLoading = false
             } else {
                 RouteHelper.back(navController)
@@ -488,7 +489,7 @@ fun PlantsDetailScreenpc(
 
 @Composable
 fun PlantsDetailUIpc(
-    plant: ResponsePlantData
+    plant: ResponsePlantDatapc
 ) {
     Column(
         modifier = Modifier
@@ -584,7 +585,7 @@ fun PlantsDetailUIpc(
                         .padding(top = 4.dp)
                 )
                 Text(
-                    text = plant.manfaat,
+                    text = plant.harga,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 4.dp)
                 )
@@ -618,7 +619,7 @@ fun PlantsDetailUIpc(
                         .padding(top = 4.dp)
                 )
                 Text(
-                    text = plant.efekSamping,
+                    text = plant.pengaruh,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 4.dp)
                 )

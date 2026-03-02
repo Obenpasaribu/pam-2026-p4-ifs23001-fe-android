@@ -4,12 +4,12 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import org.delcom.pam_p4_ifs23001.helper.SuspendHelper
 import org.delcom.pam_p4_ifs23001.network.data.ResponseMessage
-import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlant
-import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlantAdd
-import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlants
+import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlantpc
+import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlantAddpc
+import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlantspc
 
 class PlantpcRepository (private val plantApiService: PlantApiService): IPlantpcRepository {
-    override suspend fun getAllPlantspc(search: String?): ResponseMessage<ResponsePlants?> {
+    override suspend fun getAllPlantspc(search: String?): ResponseMessage<ResponsePlantspc?> {
         return SuspendHelper.safeApiCall {
             plantApiService.getAllPlantspc(search)
         }
@@ -21,19 +21,19 @@ class PlantpcRepository (private val plantApiService: PlantApiService): IPlantpc
         manfaat: RequestBody,
         efekSamping: RequestBody,
         file: MultipartBody.Part
-    ): ResponseMessage<ResponsePlantAdd?> {
+    ): ResponseMessage<ResponsePlantAddpc?> {
         return SuspendHelper.safeApiCall {
             plantApiService.postPlantpc(
                 nama = nama,
                 deskripsi = deskripsi,
-                manfaat = manfaat,
-                efekSamping = efekSamping,
+                harga = manfaat,
+                pengaruh = efekSamping,
                 file = file
             )
         }
     }
 
-    override suspend fun getPlantByIdpc(plantIdpc: String): ResponseMessage<ResponsePlant?> {
+    override suspend fun getPlantByIdpc(plantIdpc: String): ResponseMessage<ResponsePlantpc?> {
         return SuspendHelper.safeApiCall {
             plantApiService.getPlantByIdpc(plantIdpc)
         }
@@ -52,8 +52,8 @@ class PlantpcRepository (private val plantApiService: PlantApiService): IPlantpc
                 plantIdpc = plantIdpc,
                 nama = nama,
                 deskripsi = deskripsi,
-                harga = harga,
-                pengaruh = pengaruh,
+                harga = manfaat,
+                pengaruh = efekSamping,
                 file = file
             )
         }

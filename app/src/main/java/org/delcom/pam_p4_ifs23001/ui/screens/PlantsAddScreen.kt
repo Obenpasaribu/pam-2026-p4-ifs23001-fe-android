@@ -65,6 +65,7 @@ import org.delcom.pam_p4_ifs23001.helper.SuspendHelper.SnackBarType
 import org.delcom.pam_p4_ifs23001.helper.ToolsHelper.toRequestBodyText
 import org.delcom.pam_p4_ifs23001.helper.ToolsHelper.uriToMultipart
 import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlantData
+import org.delcom.pam_p4_ifs23001.network.plants.data.ResponsePlantDatapc
 import org.delcom.pam_p4_ifs23001.ui.components.BottomNavComponent
 import org.delcom.pam_p4_ifs23001.ui.components.LoadingUI
 import org.delcom.pam_p4_ifs23001.ui.components.TopAppBarComponent
@@ -520,8 +521,8 @@ fun PlantsAddScreenpc(
     // Ambil data dari viewmodel
     val uiStatePlant by plantViewModel.uiState.collectAsState()
 
-    var isLoading by remember { mutableStateOf(false) }
-    var tmpPlant by remember { mutableStateOf<ResponsePlantData?>(null) }
+    var isLoading by remember { mutableStateOf<Boolean>(false) }
+    var tmpPlant by remember { mutableStateOf<ResponsePlantDatapc?>(null) }
 
     LaunchedEffect(Unit) {
         // Reset status plant action
@@ -533,17 +534,17 @@ fun PlantsAddScreenpc(
         context: Context,
         nama: String,
         deskripsi: String,
-        manfaat: String,
-        efekSamping: String,
+        harga: String,
+        pengaruh: String,
         file: Uri
     ) {
         isLoading = true
 
-        tmpPlant = ResponsePlantData(
+        tmpPlant = ResponsePlantDatapc(
             nama = nama,
             deskripsi = deskripsi,
-            manfaat = manfaat,
-            efekSamping = efekSamping,
+            harga = harga,
+            pengaruh = pengaruh,
             id = "",
             createdAt = "",
             updatedAt = ""
@@ -551,16 +552,16 @@ fun PlantsAddScreenpc(
 
         val namaBody = nama.toRequestBodyText()
         val deskripsiBody = deskripsi.toRequestBodyText()
-        val manfaatBody = manfaat.toRequestBodyText()
-        val efekBody = efekSamping.toRequestBodyText()
+        val hargaBody = harga.toRequestBodyText()
+        val pengaruhBody = pengaruh.toRequestBodyText()
 
         val filePart = uriToMultipart(context, file, "file")
 
         plantViewModel.postPlantpc(
             nama = namaBody,
             deskripsi = deskripsiBody,
-            manfaat = manfaatBody,
-            efekSamping = efekBody,
+            manfaat = hargaBody,
+            efekSamping = pengaruhBody,
             file = filePart,
         )
     }
@@ -626,7 +627,7 @@ fun PlantsAddScreenpc(
 
 @Composable
 fun PlantsAddUIpc(
-    tmpPlant: ResponsePlantData?,
+    tmpPlant: ResponsePlantDatapc?,
     onSave: (
         Context,
         String,
@@ -641,16 +642,16 @@ fun PlantsAddUIpc(
     var dataFile by remember { mutableStateOf<Uri?>(null) }
     var dataNama by remember { mutableStateOf(tmpPlant?.nama ?: "") }
     var dataDeskripsi by remember { mutableStateOf(tmpPlant?.deskripsi ?: "") }
-    var dataManfaat by remember { mutableStateOf(tmpPlant?.manfaat ?: "") }
-    var dataEfekSamping by remember { mutableStateOf(tmpPlant?.efekSamping ?: "") }
+    var dataharga by remember { mutableStateOf(tmpPlant?.harga ?: "") }
+    var datapengaruh by remember { mutableStateOf(tmpPlant?.pengaruh ?: "") }
     val context = LocalContext.current
 
     // Focus manager
     val focusManager = LocalFocusManager.current
 
     val deskripsiFocus = remember { FocusRequester() }
-    val manfaatFocus = remember { FocusRequester() }
-    val efekFocus = remember { FocusRequester() }
+    val hargaFocus = remember { FocusRequester() }
+    val pengaruhFocus = remember { FocusRequester() }
 
     val imagePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
@@ -763,16 +764,16 @@ fun PlantsAddUIpc(
                 imeAction = ImeAction.Next
             ),
             keyboardActions = KeyboardActions(
-                onNext = { manfaatFocus.requestFocus() }
+                onNext = { hargaFocus.requestFocus() }
             ),
             maxLines = 5,
             minLines = 3
         )
 
-        // Manfaat
+        // Harga
         OutlinedTextField(
-            value = dataManfaat,
-            onValueChange = { dataManfaat = it },
+            value = dataharga,
+            onValueChange = { dataharga = it },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -782,29 +783,29 @@ fun PlantsAddUIpc(
             ),
             label = {
                 Text(
-                    text = "Manfaat",
+                    text = "Harga",
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(120.dp)
-                .focusRequester(manfaatFocus),
+                .focusRequester(hargaFocus),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next
             ),
             keyboardActions = KeyboardActions(
-                onNext = { efekFocus.requestFocus() }
+                onNext = { pengaruhFocus.requestFocus() }
             ),
             maxLines = 5,
             minLines = 3
         )
 
-        // Efek Samping
+        // Pengaruh
         OutlinedTextField(
-            value = dataEfekSamping,
-            onValueChange = { dataEfekSamping = it },
+            value = datapengaruh,
+            onValueChange = { datapengaruh = it },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -814,14 +815,14 @@ fun PlantsAddUIpc(
             ),
             label = {
                 Text(
-                    text = "Efek Samping",
+                    text = "Pengaruh",
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(120.dp)
-                .focusRequester(efekFocus),
+                .focusRequester(pengaruhFocus),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Done
@@ -865,20 +866,20 @@ fun PlantsAddUIpc(
                         return@FloatingActionButton
                     }
 
-                    if(dataManfaat.isEmpty()) {
+                    if(dataharga.isEmpty()) {
                         AlertHelper.show(
                             alertState,
                             AlertType.ERROR,
-                            "Informasi manfaat tidak boleh kosong!"
+                            "Harga tidak boleh kosong!"
                         )
                         return@FloatingActionButton
                     }
 
-                    if(dataEfekSamping.isEmpty()) {
+                    if(datapengaruh.isEmpty()) {
                         AlertHelper.show(
                             alertState,
                             AlertType.ERROR,
-                            "Informasi efek samping tidak boleh kosong!"
+                            "Informasi pengaruh tidak boleh kosong!"
                         )
                         return@FloatingActionButton
                     }
@@ -887,8 +888,8 @@ fun PlantsAddUIpc(
                         context,
                         dataNama,
                         dataDeskripsi,
-                        dataManfaat,
-                        dataEfekSamping,
+                        dataharga,
+                        datapengaruh,
                         dataFile!!
                     )
                 } else {
