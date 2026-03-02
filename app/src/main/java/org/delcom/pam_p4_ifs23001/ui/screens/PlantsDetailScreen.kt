@@ -3,16 +3,23 @@ package org.delcom.pam_p4_ifs23001.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Nature
+import androidx.compose.material.icons.filled.PriceCheck
+import androidx.compose.material.icons.filled.SettingsSuggest
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -27,13 +34,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import org.delcom.pam_p4_ifs23001.R
@@ -61,193 +74,32 @@ fun PlantsDetailScreen(
     navController: NavHostController,
     plantId: String
 ) {
-    // Muat data statis
+    // Data dummy details implementation remains the same
     val plant = remember(plantId) {
         DummyData.getPlantsData().find { it.id == plantId }
     }
 
     if (plant == null) {
-        LaunchedEffect(Unit) {
-            RouteHelper.back(navController)
-        }
+        LaunchedEffect(Unit) { RouteHelper.back(navController) }
         return
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background)
-    )
-    {
-        // Top App Bar
-        TopAppBarComponent(
-            navController = navController,
-            title = plant.nama,
-            showBackButton = true
-        )
-        // Content
-        Box(
-            modifier = Modifier
-                .weight(1f)
-        ) {
-            // Content UI
-            PlantsDetailUI(
-                plant = plant
-            )
+    Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+        TopAppBarComponent(navController = navController, title = plant.nama, showBackButton = true)
+        Box(modifier = Modifier.weight(1f)) {
+            PlantsDetailUI(plant = plant)
         }
-        // Bottom Nav
         BottomNavComponent(navController = navController)
     }
 }
 
 @Composable
-fun PlantsDetailUI(
-    plant: ResponsePlantData
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState())
-    )
-    {
-        // Gambar Placeholder
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(vertical = 16.dp)
-        )
-        {
-            Icon(
-                imageVector = Icons.Default.Nature,
-                contentDescription = plant.nama,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(250.dp)
-                    .background(MaterialTheme.colorScheme.primaryContainer),
-                tint = MaterialTheme.colorScheme.primary
-            )
-
-            Text(
-                text = plant.nama,
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-
-        // Deskripsi
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp),
-            shape = MaterialTheme.shapes.medium,
-            elevation = CardDefaults.cardElevation(4.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        )
-        {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text(
-                    text = "Deskripsi",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.SemiBold
-                )
-                HorizontalDivider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 4.dp)
-                )
-                Text(
-                    text = plant.deskripsi,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-            }
-
-        }
-
-        // Manfaat
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp),
-            shape = MaterialTheme.shapes.medium,
-            elevation = CardDefaults.cardElevation(4.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        )
-        {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text(
-                    text = "Manfaat",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.SemiBold
-                )
-                HorizontalDivider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 4.dp)
-                )
-                Text(
-                    text = plant.manfaat,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-            }
-
-        }
-
-        // Efek Samping
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp),
-            shape = MaterialTheme.shapes.medium,
-            elevation = CardDefaults.cardElevation(4.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        )
-        {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text(
-                    text = "Efek Samping",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.SemiBold
-                )
-                HorizontalDivider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 4.dp)
-                )
-                Text(
-                    text = plant.efekSamping,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-            }
-
-        }
-    }
-}
-
-@Preview(showBackground = true, name = "Light Mode")
-@Composable
-fun PreviewPlantsDetailUI() {
-    DelcomTheme {
-//        PlantsDetailUI(
-//            plant = DummyData.getPlantsData()[0]
-//        )
+fun PlantsDetailUI(plant: ResponsePlantData) {
+    // Basic implementation for static data plants
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState())) {
+        Text(text = plant.nama, style = MaterialTheme.typography.headlineMedium)
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = plant.deskripsi)
     }
 }
 
@@ -258,21 +110,16 @@ fun PlantsDetailScreenpc(
     plantViewModel: PlantViewModel,
     plantId: String
 ) {
-    // Ambil data dari viewmodel
     val uiStatePlant by plantViewModel.uiState.collectAsState()
     var isLoading by remember { mutableStateOf(false) }
     var isConfirmDelete by remember { mutableStateOf(false) }
-
-    // Muat data
     var plant by remember { mutableStateOf<ResponsePlantDatapc?>(null) }
 
-    // Dapatkan Komponen berdasarkan ID
     LaunchedEffect(Unit) {
         isLoading = true
         plantViewModel.getPlantByIdpc(plantId)
     }
 
-    // Picu ulang ketika data Komponen berubah
     LaunchedEffect(uiStatePlant.plant) {
         if(uiStatePlant.plant !is PlantUIState.Loading){
             if(uiStatePlant.plant is PlantUIState.Success){
@@ -292,250 +139,184 @@ fun PlantsDetailScreenpc(
     LaunchedEffect(uiStatePlant.plantAction) {
         when (val state = uiStatePlant.plantAction) {
             is PlantActionUIState.Success -> {
-                SuspendHelper.showSnackBar(
-                    snackbarHost = snackbarHost,
-                    type = SnackBarType.SUCCESS,
-                    message = state.message
-                )
-                RouteHelper.to(
-                    navController,
-                    ConstHelper.RouteNames.Plantspc.path,
-                    true
-                )
+                SuspendHelper.showSnackBar(snackbarHost, SnackBarType.SUCCESS, state.message)
+                RouteHelper.to(navController, ConstHelper.RouteNames.Plantspc.path, true)
                 isLoading = false
             }
             is PlantActionUIState.Error -> {
-                SuspendHelper.showSnackBar(
-                    snackbarHost = snackbarHost,
-                    type = SnackBarType.ERROR,
-                    message = state.message
-                )
+                SuspendHelper.showSnackBar(snackbarHost, SnackBarType.ERROR, state.message)
                 isLoading = false
             }
             else -> {}
         }
     }
 
-    // Tampilkan halaman loading
     if(isLoading || plant == null){
         LoadingUI()
         return
     }
 
-    // Menu item details
     val detailMenuItems = listOf(
         TopAppBarMenuItem(
             text = "Ubah Data",
             icon = Icons.Filled.Edit,
-            route = null,
             onClick = {
                 RouteHelper.to(
                     navController,
-                    ConstHelper.RouteNames.PlantsEditpc.path
-                        .replace("{plantId}", plant!!.id),
+                    ConstHelper.RouteNames.PlantsEditpc.path.replace("{plantId}", plant!!.id),
                 )
             }
         ),
         TopAppBarMenuItem(
             text = "Hapus Data",
             icon = Icons.Filled.Delete,
-            route = null,
-            onClick = {
-                isConfirmDelete = true
-            }
+            onClick = { isConfirmDelete = true }
         ),
     )
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background)
-    )
-    {
-        // Top App Bar
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.05f),
+                        MaterialTheme.colorScheme.background
+                    )
+                )
+            )
+    ) {
         TopAppBarComponent(
             navController = navController,
-            title = plant!!.nama,
+            title = "Hardware Info",
             showBackButton = true,
             customMenuItems = detailMenuItems
         )
-        // Content
-        Box(
-            modifier = Modifier
-                .weight(1f)
-        ) {
-            // Content UI
-            PlantsDetailUIpc(
-                plant = plant!!
-            )
-            // Bottom Dialog to Confirmation Delete
+        Box(modifier = Modifier.weight(1f)) {
+            PlantsDetailUIpc(plant = plant!!)
+            
             BottomDialog(
                 type = BottomDialogType.ERROR,
                 show = isConfirmDelete,
                 onDismiss = { isConfirmDelete = false },
-                title = "Konfirmasi Hapus Data",
-                message = "Apakah Anda yakin ingin menghapus data ini?",
-                confirmText = "Ya, Hapus",
-                onConfirm = {
-                    onDelete()
-                },
+                title = "Hapus Komponen?",
+                message = "Tindakan ini tidak dapat dibatalkan. Hapus permanen hardware ini?",
+                confirmText = "Hapus Permanen",
+                onConfirm = { onDelete() },
                 cancelText = "Batal",
                 destructiveAction = true
             )
         }
-        // Bottom Nav
         BottomNavComponent(navController = navController)
     }
 }
 
 @Composable
-fun PlantsDetailUIpc(
-    plant: ResponsePlantDatapc
-) {
+fun PlantsDetailUIpc(plant: ResponsePlantDatapc) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
             .verticalScroll(rememberScrollState())
-    )
-    {
-        // Gambar
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(vertical = 16.dp)
-        )
-        {
-            AsyncImage(
-                model = ToolsHelper.getPlantImageUrl(plant.id),
-                contentDescription = plant.nama,
-                placeholder = painterResource(R.drawable.img_placeholder),
-                error = painterResource(R.drawable.img_placeholder),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(250.dp),
-                contentScale = ContentScale.Fit
-            )
-
-            Text(
-                text = plant.nama,
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-
-        // Deskripsi
+    ) {
+        // Hero Image Section
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 24.dp),
-            shape = MaterialTheme.shapes.medium,
-            elevation = CardDefaults.cardElevation(4.dp),
+                .padding(vertical = 16.dp),
+            shape = RoundedCornerShape(24.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        )
-        {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text(
-                    text = "Deskripsi",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.SemiBold
-                )
-                HorizontalDivider(
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        ) {
+            Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                AsyncImage(
+                    model = ToolsHelper.getPlantImageUrlpc(plant.id),
+                    contentDescription = plant.nama,
+                    placeholder = painterResource(R.drawable.img_placeholder),
+                    error = painterResource(R.drawable.img_placeholder),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 4.dp)
+                        .height(220.dp)
+                        .clip(RoundedCornerShape(16.dp)),
+                    contentScale = ContentScale.Crop
                 )
+                
+                Spacer(modifier = Modifier.height(20.dp))
+                
                 Text(
-                    text = plant.deskripsi,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 4.dp)
+                    text = plant.nama,
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Center
                 )
             }
-
         }
 
-        // Harga
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp),
-            shape = MaterialTheme.shapes.medium,
-            elevation = CardDefaults.cardElevation(4.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        // Tech Specs Section
+        TechDetailCard(
+            icon = Icons.Default.PriceCheck,
+            title = "Current Market Price",
+            value = "IDR ${plant.harga}",
+            color = MaterialTheme.colorScheme.primary
         )
-        {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text(
-                    text = "Harga",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.SemiBold
-                )
-                HorizontalDivider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 4.dp)
-                )
-                Text(
-                    text = plant.harga,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-            }
 
-        }
-
-        // Pengaruh
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp),
-            shape = MaterialTheme.shapes.medium,
-            elevation = CardDefaults.cardElevation(4.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        TechDetailCard(
+            icon = Icons.Default.Description,
+            title = "Specifications",
+            value = plant.deskripsi,
+            color = MaterialTheme.colorScheme.secondary
         )
-        {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text(
-                    text = "Pengaruh",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.SemiBold
-                )
-                HorizontalDivider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 4.dp)
-                )
-                Text(
-                    text = plant.pengaruh,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-            }
 
-        }
+        TechDetailCard(
+            icon = Icons.Default.SettingsSuggest,
+            title = "System Impact",
+            value = plant.pengaruh,
+            color = MaterialTheme.colorScheme.tertiary
+        )
+        
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
-@Preview(showBackground = true, name = "Light Mode")
 @Composable
-fun PreviewPlantsDetailUIpc() {
-    DelcomTheme {
-//        PlantsDetailUI(
-//            plant = DummyData.getPlantsData()[0]
-//        )
+fun TechDetailCard(icon: ImageVector, title: String, value: String, color: Color) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(color.copy(alpha = 0.1f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = color,
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                    color = color
+                )
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
     }
 }

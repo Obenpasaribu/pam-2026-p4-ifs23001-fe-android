@@ -4,18 +4,26 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Badge
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,11 +36,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -53,9 +62,7 @@ fun ProfileScreen(
     navController: NavHostController,
     plantViewModel: PlantViewModel
 ) {
-    // Ambil data dari viewmodel
     val uiStatePlant by plantViewModel.uiState.collectAsState()
-
     var isLoading by remember { mutableStateOf(false) }
     var profile by remember { mutableStateOf<ResponseProfile?>(null) }
 
@@ -75,7 +82,6 @@ fun ProfileScreen(
         }
     }
 
-    // Tampilkan halaman loading
     if(isLoading || profile == null){
         LoadingUI()
         return
@@ -83,112 +89,176 @@ fun ProfileScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        // Top App Bar
-        TopAppBarComponent(navController = navController, title = "Profile", false)
-        // Content
-        Box(
-            modifier = Modifier
-                .weight(1f)
-        ) {
-            ProfileUI(
-                profile = profile!!
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                        MaterialTheme.colorScheme.background
+                    )
+                )
             )
+    ) {
+        TopAppBarComponent(navController = navController, title = "Tech Profile", false)
+        Box(modifier = Modifier.weight(1f)) {
+            ProfileUI(profile = profile!!)
         }
-        // Bottom Nav
         BottomNavComponent(navController = navController)
     }
 }
 
 @Composable
-fun ProfileUI(
-    profile: ResponseProfile
-){
+fun ProfileUI(profile: ResponseProfile){
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        // Header Profile
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 32.dp, bottom = 16.dp),
-            contentAlignment = Alignment.Center
+        // Profile Header Card
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
-
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-
-                // Foto Profil
-                AsyncImage(
-                    model = ToolsHelper.getProfilePhotoUrl(),
-                    contentDescription = "Photo Profil",
-                    placeholder = painterResource(R.drawable.img_placeholder),
-                    error = painterResource(R.drawable.img_placeholder),
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Glow effect around avatar
+                Box(
                     modifier = Modifier
-                        .size(110.dp)
+                        .size(120.dp)
                         .clip(CircleShape)
-                        .border(3.dp, Color.White, CircleShape)
-                )
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
+                        .padding(4.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AsyncImage(
+                        model = ToolsHelper.getProfilePhotoUrl(),
+                        contentDescription = "Photo Profil",
+                        placeholder = painterResource(R.drawable.img_placeholder),
+                        error = painterResource(R.drawable.img_placeholder),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(CircleShape)
+                            .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape),
+                        contentScale = ContentScale.Crop
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
                     text = profile.nama,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Text(
-                    text = profile.username,
-                    fontSize = 16.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    text = "@${profile.username}",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
         }
 
-        // Bio Section
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Info Sections
+        ProfileInfoItem(
+            icon = Icons.Default.Person,
+            title = "Full Name",
+            value = profile.nama
+        )
+        
+        ProfileInfoItem(
+            icon = Icons.Default.Badge,
+            title = "Tech ID",
+            value = profile.username
+        )
+
+        ProfileInfoItem(
+            icon = Icons.Default.Info,
+            title = "Biography",
+            value = profile.tentang.ifEmpty { "No biography provided." }
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        // Developer Badge
         Card(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(4.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    "Tentang Saya",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
+            Row(
+                modifier = Modifier.padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    profile.tentang,
-                    fontSize = 15.sp
+                    text = "Tech Developer Certified",
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
-@Preview(showBackground = true, name = "Light Mode")
 @Composable
-fun PreviewProfileUI(){
-    DelcomTheme {
-        ProfileUI(
-            profile = ResponseProfile(
-                nama = "Abdullah Ubaid",
-                username = "ifs18005",
-                tentang = ""
-            )
-        )
+fun ProfileInfoItem(icon: ImageVector, title: String, value: String) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+            Column {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = value,
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }
     }
 }
