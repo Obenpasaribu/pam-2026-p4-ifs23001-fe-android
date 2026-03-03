@@ -708,7 +708,7 @@ fun PlantsEditUIpc(
                     )
                 } else {
                     AsyncImage(
-                        model = ToolsHelper.getPlantImageUrl(plant.id),
+                        model = ToolsHelper.getPlantImageUrlpc(plant.id),
                         placeholder = painterResource(R.drawable.img_placeholder),
                         error = painterResource(R.drawable.img_placeholder),
                         contentDescription = "Pratinjau Gambar",
